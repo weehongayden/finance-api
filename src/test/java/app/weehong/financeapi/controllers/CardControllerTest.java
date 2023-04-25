@@ -40,8 +40,6 @@ public class CardControllerTest {
     @DisplayName("Should retrieve all cards")
     @Test
     public void getCard_ReturnOkStatusWithListOfCardResponseDto() throws Exception {
-        LocalDateTime currentDate = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
 
         CardResponseDto cardResponseDto = new CardResponseDto();
         cardResponseDto.setId(1L);
@@ -50,8 +48,6 @@ public class CardControllerTest {
         cardResponseDto.setStatementDate(1);
         cardResponseDto.setInitialAmount(BigDecimal.valueOf(1000.00));
         cardResponseDto.setLeftoverAmount(BigDecimal.valueOf(1000.00));
-        cardResponseDto.setCreatedAt(LocalDateTime.parse(currentDate.format(dateTimeFormatter)));
-        cardResponseDto.setUpdatedAt(LocalDateTime.parse(currentDate.format(dateTimeFormatter)));
 
         List<CardResponseDto> cards = List.of(cardResponseDto);
 
@@ -67,17 +63,12 @@ public class CardControllerTest {
                 .andExpect(jsonPath("$.data[0].name").value("DBS Live Fresh"))
                 .andExpect(jsonPath("$.data[0].bank_id").value(1L))
                 .andExpect(jsonPath("$.data[0].initial_amount").value(BigDecimal.valueOf(1000.00)))
-                .andExpect(jsonPath("$.data[0].leftover_amount").value(BigDecimal.valueOf(1000.00)))
-                .andExpect(jsonPath("$.data[0].created_at").value(currentDate.format(dateTimeFormatter)))
-                .andExpect(jsonPath("$.data[0].updated_at").value(currentDate.format(dateTimeFormatter)));
+                .andExpect(jsonPath("$.data[0].leftover_amount").value(BigDecimal.valueOf(1000.00)));
     }
 
     @DisplayName("Get card by ID should return card response dto when id is exists")
     @Test
     public void getCardById_ReturnOkStatusWithCardResponseDto_WhenIdIsExists() throws Exception {
-        LocalDateTime currentDate = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
-
         CardResponseDto cardResponseDto = new CardResponseDto();
         cardResponseDto.setId(1L);
         cardResponseDto.setName("DBS Live Fresh");
@@ -85,8 +76,6 @@ public class CardControllerTest {
         cardResponseDto.setStatementDate(1);
         cardResponseDto.setInitialAmount(BigDecimal.valueOf(1000.00));
         cardResponseDto.setLeftoverAmount(BigDecimal.valueOf(1000.00));
-        cardResponseDto.setCreatedAt(LocalDateTime.parse(currentDate.format(dateTimeFormatter)));
-        cardResponseDto.setUpdatedAt(LocalDateTime.parse(currentDate.format(dateTimeFormatter)));
 
         when(cardService.getById(1L)).thenReturn(cardResponseDto);
 
@@ -97,9 +86,7 @@ public class CardControllerTest {
                 .andExpect(jsonPath("$.data.name").value("DBS Live Fresh"))
                 .andExpect(jsonPath("$.data.bank_id").value(1L))
                 .andExpect(jsonPath("$.data.initial_amount").value(BigDecimal.valueOf(1000.00)))
-                .andExpect(jsonPath("$.data.leftover_amount").value(BigDecimal.valueOf(1000.00)))
-                .andExpect(jsonPath("$.data.created_at").value(currentDate.format(dateTimeFormatter)))
-                .andExpect(jsonPath("$.data.updated_at").value(currentDate.format(dateTimeFormatter)));
+                .andExpect(jsonPath("$.data.leftover_amount").value(BigDecimal.valueOf(1000.00)));
     }
 
     @DisplayName("Get card by ID should return not found when id is not exists")
@@ -121,9 +108,6 @@ public class CardControllerTest {
 
         String requestBody = objectMapper.writeValueAsString(cardRequestDto);
 
-        LocalDateTime currentDate = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
-
         CardResponseDto cardResponseDto = new CardResponseDto();
         cardResponseDto.setId(1L);
         cardResponseDto.setName("DBS Live Fresh");
@@ -131,8 +115,6 @@ public class CardControllerTest {
         cardResponseDto.setStatementDate(31);
         cardResponseDto.setInitialAmount(BigDecimal.valueOf(1000.00));
         cardResponseDto.setLeftoverAmount(BigDecimal.valueOf(1000.00));
-        cardResponseDto.setCreatedAt(LocalDateTime.parse(currentDate.format(dateTimeFormatter)));
-        cardResponseDto.setUpdatedAt(LocalDateTime.parse(currentDate.format(dateTimeFormatter)));
 
         when(cardService.create(any(CardRequestDto.class))).thenReturn(cardResponseDto);
 
@@ -144,9 +126,7 @@ public class CardControllerTest {
                 .andExpect(jsonPath("$.data.name").value("DBS Live Fresh"))
                 .andExpect(jsonPath("$.data.bank_id").value(1L))
                 .andExpect(jsonPath("$.data.initial_amount").value(BigDecimal.valueOf(1000.00)))
-                .andExpect(jsonPath("$.data.leftover_amount").value(BigDecimal.valueOf(1000.00)))
-                .andExpect(jsonPath("$.data.created_at").value(currentDate.format(dateTimeFormatter)))
-                .andExpect(jsonPath("$.data.updated_at").value(currentDate.format(dateTimeFormatter)));
+                .andExpect(jsonPath("$.data.leftover_amount").value(BigDecimal.valueOf(1000.00)));
     }
 
     @DisplayName("Create card controller should return bad request when request body is empty")
@@ -213,9 +193,6 @@ public class CardControllerTest {
 
         String requestBody = objectMapper.writeValueAsString(cardRequestDto);
 
-        LocalDateTime currentDate = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
-
         CardResponseDto cardResponseDto = new CardResponseDto();
         cardResponseDto.setId(1L);
         cardResponseDto.setName("POSB Everyday");
@@ -223,8 +200,6 @@ public class CardControllerTest {
         cardResponseDto.setStatementDate(1);
         cardResponseDto.setInitialAmount(BigDecimal.valueOf(1000.00));
         cardResponseDto.setLeftoverAmount(BigDecimal.valueOf(1000.00));
-        cardResponseDto.setCreatedAt(LocalDateTime.parse(currentDate.format(dateTimeFormatter)));
-        cardResponseDto.setUpdatedAt(LocalDateTime.parse(currentDate.format(dateTimeFormatter)));
 
         when(cardService.update(any(), any(CardRequestDto.class))).thenReturn(cardResponseDto);
 
@@ -237,9 +212,7 @@ public class CardControllerTest {
                 .andExpect(jsonPath("$.data.bank_id").value(1L))
                 .andExpect(jsonPath("$.data.statement_date").value(1))
                 .andExpect(jsonPath("$.data.initial_amount").value(BigDecimal.valueOf(1000.00)))
-                .andExpect(jsonPath("$.data.leftover_amount").value(BigDecimal.valueOf(1000.00)))
-                .andExpect(jsonPath("$.data.created_at").value(currentDate.format(dateTimeFormatter)))
-                .andExpect(jsonPath("$.data.updated_at").value(currentDate.format(dateTimeFormatter)));
+                .andExpect(jsonPath("$.data.leftover_amount").value(BigDecimal.valueOf(1000.00)));
     }
 
     @DisplayName("Update card controller should return not found status when id is not exists")
