@@ -1,0 +1,30 @@
+name: Build & Deploy Spring Boot Application
+
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-deploy:
+    name: Build and Deploy Spring Boot for Finance API
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '17'
+
+      - name: Unit Tests
+        run: ./gradlew test --tests "*"
+        env:
+          TZ: Asia/Singapore
+
+      - name: Build the Application
+        run: ./gradlew clean build
+        env:
+          TZ: Asia/Singapore
