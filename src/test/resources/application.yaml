@@ -1,14 +1,10 @@
 spring:
   datasource:
-    url: ${db-url:jdbc:postgresql://localhost:5432/finance-db}
-    username: ${db-user:ayden}
-    password: ${db-pass:password}
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  flyway:
+    enabled: false
 installment:
   cron: "*/10 * * * * *"

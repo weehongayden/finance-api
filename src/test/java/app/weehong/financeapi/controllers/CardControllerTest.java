@@ -41,7 +41,7 @@ public class CardControllerTest {
     @Test
     public void getCard_ReturnOkStatusWithListOfCardResponseDto() throws Exception {
         LocalDateTime currentDate = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
 
         CardResponseDto cardResponseDto = new CardResponseDto();
         cardResponseDto.setId(1L);
@@ -50,8 +50,8 @@ public class CardControllerTest {
         cardResponseDto.setStatementDate(1);
         cardResponseDto.setInitialAmount(BigDecimal.valueOf(1000.00));
         cardResponseDto.setLeftoverAmount(BigDecimal.valueOf(1000.00));
-        cardResponseDto.setCreatedAt(currentDate);
-        cardResponseDto.setUpdatedAt(currentDate);
+        cardResponseDto.setCreatedAt(LocalDateTime.parse(currentDate.format(dateTimeFormatter)));
+        cardResponseDto.setUpdatedAt(LocalDateTime.parse(currentDate.format(dateTimeFormatter)));
 
         List<CardResponseDto> cards = List.of(cardResponseDto);
 
@@ -76,7 +76,7 @@ public class CardControllerTest {
     @Test
     public void getCardById_ReturnOkStatusWithCardResponseDto_WhenIdIsExists() throws Exception {
         LocalDateTime currentDate = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
 
         CardResponseDto cardResponseDto = new CardResponseDto();
         cardResponseDto.setId(1L);
@@ -85,8 +85,8 @@ public class CardControllerTest {
         cardResponseDto.setStatementDate(1);
         cardResponseDto.setInitialAmount(BigDecimal.valueOf(1000.00));
         cardResponseDto.setLeftoverAmount(BigDecimal.valueOf(1000.00));
-        cardResponseDto.setCreatedAt(currentDate);
-        cardResponseDto.setUpdatedAt(currentDate);
+        cardResponseDto.setCreatedAt(LocalDateTime.parse(currentDate.format(dateTimeFormatter)));
+        cardResponseDto.setUpdatedAt(LocalDateTime.parse(currentDate.format(dateTimeFormatter)));
 
         when(cardService.getById(1L)).thenReturn(cardResponseDto);
 
@@ -122,7 +122,7 @@ public class CardControllerTest {
         String requestBody = objectMapper.writeValueAsString(cardRequestDto);
 
         LocalDateTime currentDate = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
 
         CardResponseDto cardResponseDto = new CardResponseDto();
         cardResponseDto.setId(1L);
@@ -131,8 +131,8 @@ public class CardControllerTest {
         cardResponseDto.setStatementDate(31);
         cardResponseDto.setInitialAmount(BigDecimal.valueOf(1000.00));
         cardResponseDto.setLeftoverAmount(BigDecimal.valueOf(1000.00));
-        cardResponseDto.setCreatedAt(currentDate);
-        cardResponseDto.setUpdatedAt(currentDate);
+        cardResponseDto.setCreatedAt(LocalDateTime.parse(currentDate.format(dateTimeFormatter)));
+        cardResponseDto.setUpdatedAt(LocalDateTime.parse(currentDate.format(dateTimeFormatter)));
 
         when(cardService.create(any(CardRequestDto.class))).thenReturn(cardResponseDto);
 
@@ -214,7 +214,7 @@ public class CardControllerTest {
         String requestBody = objectMapper.writeValueAsString(cardRequestDto);
 
         LocalDateTime currentDate = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
 
         CardResponseDto cardResponseDto = new CardResponseDto();
         cardResponseDto.setId(1L);
@@ -223,8 +223,8 @@ public class CardControllerTest {
         cardResponseDto.setStatementDate(1);
         cardResponseDto.setInitialAmount(BigDecimal.valueOf(1000.00));
         cardResponseDto.setLeftoverAmount(BigDecimal.valueOf(1000.00));
-        cardResponseDto.setCreatedAt(currentDate);
-        cardResponseDto.setUpdatedAt(currentDate);
+        cardResponseDto.setCreatedAt(LocalDateTime.parse(currentDate.format(dateTimeFormatter)));
+        cardResponseDto.setUpdatedAt(LocalDateTime.parse(currentDate.format(dateTimeFormatter)));
 
         when(cardService.update(any(), any(CardRequestDto.class))).thenReturn(cardResponseDto);
 
