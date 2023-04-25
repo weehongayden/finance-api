@@ -119,7 +119,7 @@ public class CardServiceImpl implements CardService<CardResponseDto, CardRequest
         response.setInitialAmount(card.getAmount().getInitialAmount());
         response.setLeftoverAmount(card.getAmount().getLeftoverAmount());
 
-        if (!card.getInstallments().isEmpty()) {
+        if (card.getInstallments() != null && !card.getInstallments().isEmpty()) {
             Set<InstallmentResponseDto> installments = new HashSet<>();
             card.getInstallments().forEach(unit -> {
                 InstallmentResponseDto installment = InstallmentMapper.mapInstallmentToInstallmentResponseDto(unit);
