@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  api:
+    container_name: finance-api
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      TZ: Asia/Singapore
+      db-url: jdbc:postgresql://db:5432/finance-db
+      db-user: ayden
+      db-pass: password
+    links:
+      - db
+    depends_on:
+      - db
+  db:
+    image: postgres:latest
+    container_name: finance-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ayden
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: finance-db
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  pg_data:

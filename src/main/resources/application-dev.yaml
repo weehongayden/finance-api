@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: ${db-url:jdbc:postgresql://localhost:5432/finance-db}
+    username: ${db-user:ayden}
+    password: ${db-pass:password}
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    baseline-on-migrate: true
+installment:
+  cron: "*/10 * * * * *"

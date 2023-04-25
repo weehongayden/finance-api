@@ -1,0 +1,15 @@
+info:
+  application:
+    name: finance-app
+    description: Finance App - API
+    author: Wee Hong KOH
+logging:
+  level:
+    root: INFO
+  file:
+    path: "classpath:log"
+    name: "finance-api.log"
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %level %logger{36} - %msg%n"
+  dateformat: yyyy-MM-dd HH:mm:ss.SSS,Asia/Singapore
+  timezone: Asia/Singapore

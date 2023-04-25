@@ -1,0 +1,13 @@
+{
+  "status": true,
+  "message": "Successfully update card details",
+  "data": {
+    "id": 2,
+    "name": "DBS Live Fresh",
+    "statement_date": 15,
+    "initial_amount": 22000.00,
+    "leftover_amount": 22000.00,
+    "created_at": "2023-04-11T22:59:30.749104",
+    "updated_at": "2023-04-11T22:59:30.749104"
+  }
+}
