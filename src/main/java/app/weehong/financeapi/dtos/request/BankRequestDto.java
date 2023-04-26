@@ -12,7 +12,7 @@ public class BankRequestDto {
 
     @NotNull(message = "User ID is required")
     @JsonProperty("user_id")
-    private Long userId;
+    private String userId;
 
     @NotBlank(message = "Name is required")
     private String name;

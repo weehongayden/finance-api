@@ -4,7 +4,6 @@ import app.weehong.financeapi.dtos.request.AmountRequestDto;
 import app.weehong.financeapi.dtos.response.AmountResponseDto;
 import app.weehong.financeapi.entities.Amount;
 import app.weehong.financeapi.repositories.AmountRepository;
-import app.weehong.financeapi.repositories.InstallmentRepository;
 import app.weehong.financeapi.utils.InstallmentCalculator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +21,10 @@ import java.util.stream.StreamSupport;
 public class AmountServiceImpl implements AmountService<AmountResponseDto, AmountRequestDto>{
 
     private final AmountRepository amountRepository;
-    private final InstallmentRepository installmentRepository;
 
     @Autowired
-    public AmountServiceImpl(AmountRepository amountRepository, InstallmentRepository installmentRepository) {
+    public AmountServiceImpl(AmountRepository amountRepository) {
         this.amountRepository = amountRepository;
-        this.installmentRepository = installmentRepository;
     }
 
     @Override
@@ -47,14 +44,23 @@ public class AmountServiceImpl implements AmountService<AmountResponseDto, Amoun
         Iterable<Amount> amounts = amountRepository.findAll();
         Stream<Amount> amountStream = StreamSupport.stream(amounts.spliterator(), false);
 
-        return amountStream.map(amount -> mapAmountToAmountResponseDto(amount))
+        return amountStream.map(this::mapAmountToAmountResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AmountResponseDto> all(String userId) {
+        Iterable<Amount> amounts = amountRepository.findAllByUserId(userId);
+        Stream<Amount> amountStream = StreamSupport.stream(amounts.spliterator(), false);
+
+        return amountStream.map(this::mapAmountToAmountResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public AmountResponseDto getById(Long id) {
         Optional<AmountResponseDto> amountResponseDto = amountRepository.findById(id)
-                .map(card -> mapAmountToAmountResponseDto(card));
+                .map(this::mapAmountToAmountResponseDto);
         if (!amountResponseDto.isPresent()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "AmountServiceImpl - getById(): Amount ID doesn't exists.");
         }
