@@ -11,6 +11,13 @@ import java.math.BigDecimal;
 @Repository
 public interface AmountRepository extends CrudRepository<Amount, Long> {
 
+    @Query("""
+            SELECT a
+            FROM Amount a
+            WHERE a.user.id = :id
+            """)
+    Iterable<Amount> findAllByUserId(String id);
+
     @Modifying
     @Query("""
             UPDATE Amount a

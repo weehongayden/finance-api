@@ -11,16 +11,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,6 +37,14 @@ public class CardControllerTest {
 
     @MockBean
     private CardService<CardResponseDto, CardRequestDto> cardService;
+
+    @DisplayName("Should returns 401 when token is not provided")
+    @Test
+    public void getCard_ReturnUnauthorized() throws Exception {
+        mockMvc.perform(get("/api/v1/cards")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
 
     @DisplayName("Should retrieve all cards")
     @Test
@@ -54,7 +63,8 @@ public class CardControllerTest {
         when(cardService.all()).thenReturn(cards);
 
         mockMvc.perform(get("/api/v1/cards")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Record has fetched successfully"))
                 .andExpect(jsonPath("$.data").isArray())
@@ -64,6 +74,16 @@ public class CardControllerTest {
                 .andExpect(jsonPath("$.data[0].bank_id").value(1L))
                 .andExpect(jsonPath("$.data[0].initial_amount").value(BigDecimal.valueOf(1000.00)))
                 .andExpect(jsonPath("$.data[0].leftover_amount").value(BigDecimal.valueOf(1000.00)));
+    }
+
+    @DisplayName("Should returns 401 when token is not provided")
+    @Test
+    public void getCardById_ReturnUnauthorized() throws Exception {
+        when(cardService.getById(1L)).thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+
+        mockMvc.perform(get("/api/v1/cards/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
     }
 
     @DisplayName("Get card by ID should return card response dto when id is exists")
@@ -80,7 +100,8 @@ public class CardControllerTest {
         when(cardService.getById(1L)).thenReturn(cardResponseDto);
 
         mockMvc.perform(get("/api/v1/cards/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").value(1L))
                 .andExpect(jsonPath("$.data.name").value("DBS Live Fresh"))
@@ -93,8 +114,18 @@ public class CardControllerTest {
     @Test
     public void getCardById_ReturnNotFoundStatus_WhenIdIsNotExists() throws Exception {
         mockMvc.perform(get("/api/v1/cards/99")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()))
                 .andExpect(status().isNotFound());
+    }
+
+    @DisplayName("Should returns 401 when token is not provided")
+    @Test
+    public void createCard_ReturnUnauthorized() throws Exception {
+        mockMvc.perform(post("/api/v1/cards")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized());
     }
 
     @DisplayName("Create card controller should create card successfully and return card response dto")
@@ -120,7 +151,8 @@ public class CardControllerTest {
 
         mockMvc.perform(post("/api/v1/cards")
                         .content(requestBody)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.id").value(1L))
                 .andExpect(jsonPath("$.data.name").value("DBS Live Fresh"))
@@ -138,7 +170,8 @@ public class CardControllerTest {
 
         mockMvc.perform(post("/api/v1/cards")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
+                        .content(requestBody)
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.name").value("Name is required"))
                 .andExpect(jsonPath("$.errors.bank_id").value("Bank ID is required"))
@@ -159,7 +192,8 @@ public class CardControllerTest {
 
         mockMvc.perform(post("/api/v1/cards")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
+                        .content(requestBody)
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.statement_date").value("Statement date must be between 1 and 31"));
     }
@@ -177,9 +211,19 @@ public class CardControllerTest {
 
         mockMvc.perform(post("/api/v1/cards")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
+                        .content(requestBody)
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.statement_date").value("Statement date must be between 1 and 31"));
+    }
+
+    @DisplayName("Should returns 401 when token is not provided")
+    @Test
+    public void updateCard_ReturnUnauthorized() throws Exception {
+        mockMvc.perform(put("/api/v1/cards")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized());
     }
 
     @DisplayName("Update card controller should update card successfully and return card response dto")
@@ -205,7 +249,8 @@ public class CardControllerTest {
 
         mockMvc.perform(put("/api/v1/cards/1")
                         .content(requestBody)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").value(1L))
                 .andExpect(jsonPath("$.data.name").value("POSB Everyday"))
@@ -230,7 +275,8 @@ public class CardControllerTest {
 
         mockMvc.perform(put("/api/v1/cards/99")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
+                        .content(requestBody)
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(false))
                 .andExpect(jsonPath("$.message").value("CardServiceImpl - update(): Card ID doesn't exists."));
@@ -251,10 +297,22 @@ public class CardControllerTest {
 
         mockMvc.perform(put("/api/v1/cards/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
+                        .content(requestBody)
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(false))
                 .andExpect(jsonPath("$.message").value("CardServiceImpl - update(): Amount/Bank ID doesn't exists."));
+    }
+
+    @DisplayName("Should returns 401 when token is not provided")
+    @Test
+    public void deleteCard_ReturnUnauthorized() throws Exception {
+        when(cardService.delete(1L)).thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+
+        mockMvc.perform(delete("/api/v1/cards/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized());
     }
 
     @DisplayName("Delete card controller should delete card successfully")
@@ -263,7 +321,8 @@ public class CardControllerTest {
         when(cardService.delete(any())).thenReturn(true);
 
         mockMvc.perform(delete("/api/v1/cards/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(true))
                 .andExpect(jsonPath("$.message").value("Successfully update card"))
@@ -276,7 +335,8 @@ public class CardControllerTest {
         when(cardService.delete(any())).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "CardServiceImpl - delete(): Card ID doesn't exists."));
 
         mockMvc.perform(delete("/api/v1/cards/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(false))
                 .andExpect(jsonPath("$.message").value("CardServiceImpl - delete(): Card ID doesn't exists."));

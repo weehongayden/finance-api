@@ -1,4 +1,9 @@
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${oauth2-issuer}
   datasource:
     url: ${db-url:jdbc:postgresql://localhost:5432/finance-db}
     username: ${db-user:ayden}
@@ -7,4 +12,6 @@ spring:
   flyway:
     baseline-on-migrate: true
 installment:
-  cron: "0 0 */1 * * *"
+  cron: "*/10 * * * * *"
+auth0:
+  audience: ${oauth2-audience}
