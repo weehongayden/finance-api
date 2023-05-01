@@ -1,21 +1,20 @@
 package app.weehong.financeapi.projections.installments;
 
 import app.weehong.financeapi.entities.Card;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public interface AllValidInstallmentsProjection {
 
-    Long getId();
+  Long getId();
 
-    LocalDate getEndDate();
+  LocalDate getEndDate();
 
-    Integer getLeftoverTenure();
+  Integer getLeftoverTenure();
 
-    String getName();
+  String getName();
 
-    BigDecimal getPricePerMonth();
+  BigDecimal getPricePerMonth();
 
-    Card getCard();
+  Card getCard();
 }

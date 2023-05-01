@@ -13,14 +13,14 @@ import org.springframework.web.server.ResponseStatusException;
 @RestControllerAdvice
 public class ResourceNotFoundExceptionHandler {
 
-    @ExceptionHandler(ResponseStatusException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<Object> handleNotFoundException(ResponseStatusException ex) {
-        log.error("ResourceNotFoundException: " + ex.getMessage());
-        GenericResponseDto genericResponseDto = GenericResponseDto.builder()
-                .isSuccess(false)
-                .message(ex.getReason())
-                .build();
-        return new ResponseEntity<>(genericResponseDto, null, 404);
-    }
+  @ExceptionHandler(ResponseStatusException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public ResponseEntity<Object> handleNotFoundException(ResponseStatusException ex) {
+    log.error("ResourceNotFoundException: " + ex.getMessage());
+    GenericResponseDto<Object> genericResponseDto = GenericResponseDto.builder()
+        .isSuccess(false)
+        .message(ex.getReason())
+        .build();
+    return new ResponseEntity<>(genericResponseDto, null, 404);
+  }
 }

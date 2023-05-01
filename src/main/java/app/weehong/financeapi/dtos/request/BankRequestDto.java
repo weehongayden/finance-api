@@ -10,10 +10,10 @@ import lombok.Setter;
 @Setter
 public class BankRequestDto {
 
-    @NotNull(message = "User ID is required")
-    @JsonProperty("user_id")
-    private String userId;
+  @NotNull(message = "User ID is required")
+  @JsonProperty("user_id")
+  private String userId;
 
-    @NotBlank(message = "Name is required")
-    private String name;
+  @NotBlank(message = "Name is required")
+  private String name;
 }

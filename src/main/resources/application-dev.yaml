@@ -3,7 +3,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${oauth2-issuer}
+          issuer-uri: ${oauth2-issuer:https://finance-app-development.jp.auth0.com/}
   datasource:
     url: ${db-url:jdbc:postgresql://localhost:5432/finance-db}
     username: ${db-user:ayden}
@@ -14,4 +14,4 @@ spring:
 installment:
   cron: "*/10 * * * * *"
 auth0:
-  audience: ${oauth2-audience}
+  audience: ${oauth2-audience:finance-api-development}

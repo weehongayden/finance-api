@@ -1,26 +1,15 @@
 package app.weehong.financeapi.utils;
 
-import app.weehong.financeapi.repositories.InstallmentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.math.BigDecimal;
+import org.springframework.stereotype.Component;
 
 @Component
 public class InstallmentCalculator {
 
-    private static InstallmentRepository installmentRepository;
-
-    @Autowired
-    public InstallmentCalculator(InstallmentRepository installmentRepository) {
-        this.installmentRepository = installmentRepository;
+  public BigDecimal calculateLeftoverAmount(BigDecimal totalAmount, BigDecimal initialAmount) {
+    if (initialAmount == null) {
+      return initialAmount;
     }
-
-    public static BigDecimal calculateLeftoverAmount(Long id, BigDecimal amount) {
-        BigDecimal totalAmount = installmentRepository.SumInstallmentByAmountId(id);
-        if (totalAmount == null) {
-            return amount;
-        }
-        return amount.subtract(totalAmount);
-    }
+    return initialAmount.subtract(totalAmount);
+  }
 }

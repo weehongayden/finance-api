@@ -1,15 +1,14 @@
 package app.weehong.financeapi.annotations;
 
+import static java.lang.annotation.ElementType.FIELD;
+
 import app.weehong.financeapi.validators.NumberRangeValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.FIELD;
 
 @Documented
 @Constraint(validatedBy = NumberRangeValidator.class)
@@ -17,13 +16,13 @@ import static java.lang.annotation.ElementType.FIELD;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NumberRange {
 
-    Class<?>[] groups() default {};
+  Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default {};
+  Class<? extends Payload>[] payload() default {};
 
-    int min() default 1;
+  int min() default 1;
 
-    int max() default 31;
+  int max() default 31;
 
-    String message() default "Invalid number range";
+  String message() default "Invalid number range";
 }

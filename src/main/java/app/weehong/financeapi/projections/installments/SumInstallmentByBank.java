@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public interface SumInstallmentByBank {
 
-    BigDecimal getTotalAmount();
+  BigDecimal getTotalAmount();
 
-    String getName();
+  String getName();
 }
