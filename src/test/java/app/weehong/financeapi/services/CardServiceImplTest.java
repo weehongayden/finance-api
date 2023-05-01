@@ -25,6 +25,7 @@ import app.weehong.financeapi.repositories.UserRepository;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -144,7 +145,7 @@ class CardServiceImplTest {
 
   @DisplayName("Create card should return 404 error when userId is not present")
   @Test
-  void create_ReturnNotFound_WhenUserNotPresent() {
+  void CardService_Create_create_ReturnNotFound_WhenUserNotPresent() {
     when(userRepository.findById(""))
         .thenReturn(Optional.empty());
 
@@ -198,12 +199,8 @@ class CardServiceImplTest {
   @DisplayName("Get all cards should return card list if cards exist")
   @Test
   void CardService_All_ShouldReturnCardList() {
-    List<Card> mockCardList = new ArrayList<>();
-    mockCardList.add(mockCardOne);
-    mockCardList.add(mockCardTwo);
-
     when(cardRepository.findAllByUserId("random-string"))
-        .thenReturn(mockCardList);
+        .thenReturn(Arrays.asList(mockCardOne, mockCardTwo));
 
     List<CardResponseDto> cards = cardService.all("random-string");
 

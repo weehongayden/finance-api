@@ -162,20 +162,6 @@ public class InstallmentServiceImpl implements
   }
 
   @Override
-  public List<InstallmentResponseDto> totalPricePerMonth(String userId) {
-    return installmentRepository.SumInstallmentGroupByBank(userId)
-        .stream()
-        .map(unit -> {
-          InstallmentResponseDto holder = new InstallmentResponseDto();
-          holder.setTotalAmount(unit.getTotalAmount());
-          holder.setName(unit.getName());
-          holder.setIsActive(null);
-          return holder;
-        })
-        .collect(Collectors.toList());
-  }
-
-  @Override
   public boolean delete(Long id, String userId) {
     Optional<Installment> installment = installmentRepository.findByUserId(id, userId);
 
@@ -187,6 +173,20 @@ public class InstallmentServiceImpl implements
 
     installment = installmentRepository.findById(id);
     return !installment.isPresent();
+  }
+
+  @Override
+  public List<InstallmentResponseDto> totalPricePerMonth(String userId) {
+    return installmentRepository.SumInstallmentGroupByBank(userId)
+        .stream()
+        .map(unit -> {
+          InstallmentResponseDto holder = new InstallmentResponseDto();
+          holder.setTotalAmount(unit.getTotalAmount());
+          holder.setName(unit.getName());
+          holder.setIsActive(null);
+          return holder;
+        })
+        .collect(Collectors.toList());
   }
 
   @Transactional

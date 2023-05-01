@@ -77,7 +77,7 @@ public class AmountServiceImpl implements AmountService<AmountResponseDto, Amoun
   @Override
   public AmountResponseDto getById(Long id, String userId) {
     Optional<User> user = userRepository.findById(userId);
-    Optional<Amount> amount = amountRepository.findById(id);
+    Optional<Amount> amount = amountRepository.findByUserId(id, userId);
 
     if (!user.isPresent() || !amount.isPresent()) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Record ID doesn't exist.");
@@ -89,7 +89,7 @@ public class AmountServiceImpl implements AmountService<AmountResponseDto, Amoun
   @Override
   public AmountResponseDto update(Long id, String userId, AmountRequestDto amountRequestDto) {
     Optional<User> user = userRepository.findById(userId);
-    Optional<Amount> amount = amountRepository.findById(id);
+    Optional<Amount> amount = amountRepository.findByUserId(id, userId);
 
     if (!user.isPresent() || !amount.isPresent()) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Record ID doesn't exist.");
@@ -111,7 +111,7 @@ public class AmountServiceImpl implements AmountService<AmountResponseDto, Amoun
   @Transactional
   @Override
   public boolean delete(Long id, String userId) {
-    Optional<Amount> amount = amountRepository.findById(id);
+    Optional<Amount> amount = amountRepository.findByUserId(id, userId);
 
     if (!amount.isPresent()) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Record ID doesn't exist.");
