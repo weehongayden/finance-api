@@ -32,5 +32,5 @@ git clone git@github.com:weehongayden/finance-api.git
 Then, run the following command to start the application:
 
 ```bash
-docker compose up -d --build
+docker compose --env-file .env up -d --build
 ```

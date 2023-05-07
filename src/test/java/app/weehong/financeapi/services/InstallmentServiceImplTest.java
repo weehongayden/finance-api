@@ -6,17 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import app.weehong.financeapi.dtos.request.InstallmentRequestDto;
 import app.weehong.financeapi.dtos.response.InstallmentResponseDto;
-import app.weehong.financeapi.entities.Amount;
-import app.weehong.financeapi.entities.Bank;
-import app.weehong.financeapi.entities.Card;
-import app.weehong.financeapi.entities.Installment;
-import app.weehong.financeapi.entities.User;
+import app.weehong.financeapi.entities.*;
 import app.weehong.financeapi.projections.installments.AllValidInstallmentsProjection;
 import app.weehong.financeapi.projections.installments.SumInstallmentByBank;
 import app.weehong.financeapi.repositories.AmountRepository;
@@ -27,7 +21,6 @@ import app.weehong.financeapi.utils.InstallmentCalculator;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -46,10 +39,10 @@ public class InstallmentServiceImplTest {
   private InstallmentRepository installmentRepository;
 
   @Mock
-  private CardRepository cardRepository;
+  private AmountRepository amountRepository;
 
   @Mock
-  private AmountRepository amountRepository;
+  private CardRepository cardRepository;
 
   @Mock
   private UserRepository userRepository;
@@ -191,6 +184,7 @@ public class InstallmentServiceImplTest {
         .thenReturn(Optional.of(mockInstallmentOne));
     when(installmentRepository.save(any(Installment.class)))
         .thenReturn(mockInstallmentOne);
+    doNothing().when(amountRepository).updateLeftoverAmountById(anyLong(), any());
 
     InstallmentResponseDto installment = installmentService.update(1L, "random-string", installmentRequestDto);
 

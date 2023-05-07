@@ -3,7 +3,6 @@ package app.weehong.financeapi.controllers;
 import app.weehong.financeapi.dtos.request.CardRequestDto;
 import app.weehong.financeapi.dtos.response.CardResponseDto;
 import app.weehong.financeapi.services.CardService;
-import app.weehong.financeapi.utils.JwtUtil;
 import app.weehong.financeapi.utils.ResponseUtil;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -12,13 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,88 +28,50 @@ public class CardController {
 
   private final CardService<CardResponseDto, CardRequestDto> cardService;
 
-  private final JwtUtil jwtUtil;
-
   @Autowired
-  public CardController(CardService<CardResponseDto, CardRequestDto> cardService, JwtUtil jwtUtil) {
+  public CardController(CardService<CardResponseDto, CardRequestDto> cardService) {
     this.cardService = cardService;
-    this.jwtUtil = jwtUtil;
   }
 
   @GetMapping
   public ResponseEntity getCards(
-      @RequestHeader(name = "Authorization") String authorizationHeader) {
+      Authentication authentication) {
     log.info("getCards() function called");
-
-    String userId = jwtUtil.extractUserId(authorizationHeader);
-
-    if (userId == null) {
-      return ResponseUtil.ResponseMapping(null, "Invalid token", HttpStatus.UNAUTHORIZED);
-    }
-
-    List<CardResponseDto> cards = cardService.all(userId);
+    List<CardResponseDto> cards = cardService.all(authentication.getName());
     return ResponseUtil.ResponseMapping(cards, "Record has fetched successfully", HttpStatus.OK);
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity getCard(@RequestHeader(name = "Authorization") String authorizationHeader,
+  public ResponseEntity getCard(Authentication authentication,
       @PathVariable Long id) {
     log.info("getCard(" + id + ") function called");
-
-    String userId = jwtUtil.extractUserId(authorizationHeader);
-
-    if (userId == null) {
-      return ResponseUtil.ResponseMapping(null, "Invalid token", HttpStatus.UNAUTHORIZED);
-    }
-
-    CardResponseDto card = cardService.getById(id, userId);
+    CardResponseDto card = cardService.getById(id, authentication.getName());
     return ResponseUtil.ResponseMapping(card, "Record has fetched successfully", HttpStatus.OK);
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity createCard(
-      @RequestHeader(name = "Authorization") String authorizationHeader,
+      Authentication authentication,
       @Valid @RequestBody CardRequestDto cardRequestDto) {
     log.info("createCard() function called");
-
-    String userId = jwtUtil.extractUserId(authorizationHeader);
-
-    if (userId == null) {
-      return ResponseUtil.ResponseMapping(null, "Invalid token", HttpStatus.UNAUTHORIZED);
-    }
-
-    CardResponseDto card = cardService.create(userId, cardRequestDto);
+    CardResponseDto card = cardService.create(authentication.getName(), cardRequestDto);
     return ResponseUtil.ResponseMapping(card, "Successfully created card", HttpStatus.CREATED);
   }
 
   @PutMapping("/{id}")
   public ResponseEntity updateCard(
-      @RequestHeader(name = "Authorization") String authorizationHeader, @PathVariable Long id,
+      Authentication authentication, @PathVariable Long id,
       @Valid @RequestBody CardRequestDto cardRequestDto) {
     log.info("getCard(" + id + ") function called");
-
-    String userId = jwtUtil.extractUserId(authorizationHeader);
-
-    if (userId == null) {
-      return ResponseUtil.ResponseMapping(null, "Invalid token", HttpStatus.UNAUTHORIZED);
-    }
-
-    CardResponseDto card = cardService.update(id, userId, cardRequestDto);
+    CardResponseDto card = cardService.update(id, authentication.getName(), cardRequestDto);
     return ResponseUtil.ResponseMapping(card, "Successfully update card", HttpStatus.OK);
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity deleteCard(
-      @RequestHeader(name = "Authorization") String authorizationHeader, @PathVariable Long id) {
+          Authentication authentication, @PathVariable Long id) {
     log.info("deleteCard(" + id + ") function called");
-
-    String userId = jwtUtil.extractUserId(authorizationHeader);
-
-    if (userId == null) {
-      return ResponseUtil.ResponseMapping(null, "Invalid token", HttpStatus.UNAUTHORIZED);
-    }
-
-    boolean result = cardService.delete(id, userId);
+    boolean result = cardService.delete(id, authentication.getName());
     return ResponseUtil.ResponseMapping(result, "Successfully update card", HttpStatus.OK);
   }
 }

@@ -15,10 +15,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import app.weehong.financeapi.dtos.request.AmountRequestDto;
 import app.weehong.financeapi.dtos.response.AmountResponseDto;
 import app.weehong.financeapi.services.AmountService;
-import app.weehong.financeapi.utils.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +28,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 
-@WebMvcTest(AmountController.class)
+@WebMvcTest(value = AmountController.class)
 public class AmountControllerTest {
 
   @Autowired
@@ -42,9 +44,6 @@ public class AmountControllerTest {
 
   @MockBean
   private AmountService<AmountResponseDto, AmountRequestDto> cardService;
-
-  @MockBean
-  private JwtUtil jwtUtil;
 
   @DisplayName("Should returns 401 when token is not provided")
   @Test
@@ -65,7 +64,6 @@ public class AmountControllerTest {
 
     List<AmountResponseDto> cards = List.of(amountResponseDto);
 
-    when(jwtUtil.extractUserId(anyString())).thenReturn("random-string");
     when(cardService.all(anyString())).thenReturn(cards);
 
     mockMvc.perform(get("/api/v1/amounts")
@@ -102,7 +100,6 @@ public class AmountControllerTest {
     amountResponseDto.setInitialAmount(BigDecimal.valueOf(1000.00));
     amountResponseDto.setLeftoverAmount(BigDecimal.valueOf(1000.00));
 
-    when(jwtUtil.extractUserId(anyString())).thenReturn("tester");
     when(cardService.getById(anyLong(), anyString())).thenReturn(amountResponseDto);
 
     mockMvc.perform(get("/api/v1/amounts/1")
@@ -152,7 +149,6 @@ public class AmountControllerTest {
     amountResponseDto.setInitialAmount(BigDecimal.valueOf(1000.00));
     amountResponseDto.setLeftoverAmount(BigDecimal.valueOf(1000.00));
 
-    when(jwtUtil.extractUserId(anyString())).thenReturn("tester");
     when(cardService.create(anyString(), any(AmountRequestDto.class))).thenReturn(amountResponseDto);
 
     mockMvc.perform(post("/api/v1/amounts")
@@ -243,7 +239,6 @@ public class AmountControllerTest {
     amountResponseDto.setInitialAmount(BigDecimal.valueOf(1000.00));
     amountResponseDto.setLeftoverAmount(BigDecimal.valueOf(1000.00));
 
-    when(jwtUtil.extractUserId(anyString())).thenReturn("tester");
     when(cardService.update(any(), anyString(), any(AmountRequestDto.class))).thenReturn(
         amountResponseDto);
 
@@ -270,7 +265,7 @@ public class AmountControllerTest {
 
     when(cardService.update(any(), anyString(), any(AmountRequestDto.class))).thenThrow(
         new ResponseStatusException(HttpStatus.NOT_FOUND,
-            "AmountServiceImpl - update(): Card ID doesn't exists"));
+            "Record ID doesn't exists"));
 
     mockMvc.perform(put("/api/v1/amounts/99")
             .contentType(MediaType.APPLICATION_JSON)
@@ -280,7 +275,7 @@ public class AmountControllerTest {
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.status").value(false))
         .andExpect(
-            jsonPath("$.message").value("Record doesn't exists"));
+            jsonPath("$.message").value("Record ID doesn't exists"));
   }
 
   @DisplayName("Update card controller should return not found status when id is not exists")
@@ -294,7 +289,7 @@ public class AmountControllerTest {
 
     when(cardService.update(any(), anyString(), any(AmountRequestDto.class))).thenThrow(
         new ResponseStatusException(HttpStatus.NOT_FOUND,
-            "AmountServiceImpl - update(): Amount/Bank ID doesn't exists"));
+            "Record ID doesn't exists"));
 
     mockMvc.perform(put("/api/v1/amounts/1")
             .contentType(MediaType.APPLICATION_JSON)
@@ -304,7 +299,7 @@ public class AmountControllerTest {
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.status").value(false))
         .andExpect(jsonPath("$.message").value(
-            "Record doesn't exists"));
+            "Record ID doesn't exists"));
   }
 
   @DisplayName("Should returns 401 when token is not provided")
@@ -323,7 +318,6 @@ public class AmountControllerTest {
   @DisplayName("Delete card controller should delete card successfully")
   @Test
   public void deleteCard_ShouldDeleteCard_WhenIdIsExists() throws Exception {
-    when(jwtUtil.extractUserId(anyString())).thenReturn("tester");
     when(cardService.delete(any(), anyString())).thenReturn(true);
 
     mockMvc.perform(delete("/api/v1/amounts/1")
@@ -350,6 +344,6 @@ public class AmountControllerTest {
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.status").value(false))
         .andExpect(
-            jsonPath("$.message").value("Record doesn't exists"));
+            jsonPath("$.message").value("Record ID doesn't exists"));
   }
 }
